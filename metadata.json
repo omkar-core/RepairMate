@@ -1,0 +1,5 @@
+{
+  "name": "RepairMate AI",
+  "description": "Live DIY Repair Assistant powered by Gemini. Upload a photo of a broken device and get step-by-step repair instructions.",
+  "requestFramePermissions": ["camera"]
+}
