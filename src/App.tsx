@@ -71,11 +71,10 @@ export default function App() {
         }
       ]);
       setAppState('dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error during analysis:', error);
-      // Fallback or error state
       setAppState('landing');
-      alert('Failed to analyze the image. Please try again.');
+      alert(error.message || 'Failed to analyze the image. Please try again.');
     } finally {
       clearTimeout(timer1);
       clearTimeout(timer2);
@@ -139,12 +138,12 @@ export default function App() {
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: '⚠️ **Error:** I encountered an issue while trying to process your request. Please try again.',
+        content: `⚠️ **Error:** ${error.message || 'I encountered an issue while trying to process your request. Please try again.'}`,
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {

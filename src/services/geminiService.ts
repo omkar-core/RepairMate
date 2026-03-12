@@ -1,6 +1,17 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+let aiClient: GoogleGenAI | null = null;
+
+function getAI(): GoogleGenAI {
+  if (!aiClient) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      throw new Error("GEMINI_API_KEY is missing. Please add it to your Vercel environment variables and redeploy.");
+    }
+    aiClient = new GoogleGenAI({ apiKey });
+  }
+  return aiClient;
+}
 
 const SYSTEM_INSTRUCTION = `You are RepairMate AI, an elite, professional engineering and technical repair AI. Your purpose is to provide highly accurate, real-world, engineering-grade repair diagnostics and step-by-step solutions based strictly on the provided images and descriptions.
 
@@ -67,7 +78,7 @@ export async function analyzeRepairIssueStructured(
       });
     }
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: { parts },
       config: {
@@ -141,8 +152,11 @@ export async function analyzeRepairIssueStructured(
 
     const text = response.text || "{}";
     return JSON.parse(text) as RepairAnalysis;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error analyzing repair issue:", error);
+    if (error.message && error.message.includes("GEMINI_API_KEY")) {
+      throw error;
+    }
     throw new Error("Failed to analyze the issue. Please try again.");
   }
 }
@@ -173,7 +187,7 @@ export async function chatWithRepairMate(
 
     contents.push({ role: 'user', parts: userParts });
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: "gemini-3-flash-preview",
       contents: contents,
       config: {
@@ -182,8 +196,11 @@ export async function chatWithRepairMate(
     });
 
     return response.text || "I'm sorry, I couldn't generate a response.";
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in chat:", error);
+    if (error.message && error.message.includes("GEMINI_API_KEY")) {
+      throw error;
+    }
     throw new Error("Failed to send message. Please try again.");
   }
 }
