@@ -73,8 +73,11 @@ export default function App() {
       setAppState('dashboard');
     } catch (error: any) {
       console.error('Error during analysis:', error);
-      setAppState('landing');
-      alert(error.message || 'Failed to analyze the image. Please try again.');
+      setImageError({
+        issue: 'Analysis Failed',
+        message: error.message || 'Failed to analyze the image. Please try again.'
+      });
+      setAppState('error');
     } finally {
       clearTimeout(timer1);
       clearTimeout(timer2);

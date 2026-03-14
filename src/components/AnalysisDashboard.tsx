@@ -13,6 +13,12 @@ interface AnalysisDashboardProps {
 
 export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, capturedImage }) => {
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set());
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   const toggleStep = (idx: number) => {
     setCompletedSteps(prev => {
@@ -63,10 +69,10 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
     } else {
       try {
         await navigator.clipboard.writeText(shareText);
-        alert('Repair guide copied to clipboard!');
+        showToast('Repair guide copied to clipboard!');
       } catch (err) {
         console.error('Error copying to clipboard:', err);
-        alert('Failed to copy to clipboard. Please try manually.');
+        showToast('Failed to copy to clipboard. Please try manually.');
       }
     }
   };
@@ -95,6 +101,14 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
       animate="show"
       className="flex flex-col gap-6 w-full max-w-6xl mx-auto relative pb-12"
     >
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-4 right-4 z-50 bg-zinc-800 text-white px-4 py-2 rounded-lg shadow-lg border border-white/10 flex items-center gap-2">
+          <CheckCircle size={16} className="text-emerald-400" />
+          <span className="text-sm font-medium">{toastMessage}</span>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="absolute -top-14 right-0 z-10 flex items-center gap-2">
         <button 
