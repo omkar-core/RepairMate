@@ -32,10 +32,11 @@ export default function App() {
   const handleImageCapture = async (imageSrc: string) => {
     setCapturedImage(imageSrc);
     setAppState('loading');
-    setLoadingMessage('Analyzing device...');
+    setLoadingMessage('🔍 Detecting device...');
     
-    const timer1 = setTimeout(() => setLoadingMessage('Detecting components...'), 2500);
-    const timer2 = setTimeout(() => setLoadingMessage('Generating repair steps...'), 5000);
+    const timer1 = setTimeout(() => setLoadingMessage('🧠 Identifying components...'), 2000);
+    const timer2 = setTimeout(() => setLoadingMessage('⚙️ Diagnosing possible faults...'), 4000);
+    const timer3 = setTimeout(() => setLoadingMessage('📋 Generating repair instructions...'), 6000);
     
     try {
       let base64Image = '';
@@ -81,6 +82,7 @@ export default function App() {
     } finally {
       clearTimeout(timer1);
       clearTimeout(timer2);
+      clearTimeout(timer3);
     }
   };
 
@@ -185,7 +187,7 @@ export default function App() {
 
   if (appState === 'error' && imageError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6 relative overflow-hidden">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-zinc-950 text-white p-6 relative overflow-hidden w-full">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-500/10 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="z-10 flex flex-col items-center text-center max-w-md bg-zinc-900/40 backdrop-blur-xl p-8 rounded-3xl border border-red-500/20 shadow-2xl">
@@ -264,14 +266,14 @@ export default function App() {
             
             {isLoading && (
               <div className="flex w-full gap-4 p-5 md:p-6 rounded-3xl bg-zinc-800/30 backdrop-blur-xl border border-white/10 shadow-xl mr-auto max-w-[90%]">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-[0_0_15px_rgba(34,211,238,0.15)] bg-zinc-800 text-cyan-400 border border-white/10">
-                  <Wrench size={20} className="animate-spin" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner overflow-hidden bg-zinc-800 border border-white/10 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
+                  <img src="https://api.dicebear.com/7.x/bottts/svg?seed=RepairMate&backgroundColor=transparent" alt="AI" className="w-full h-full object-cover p-1" />
                 </div>
                 <div className="flex flex-col justify-center">
                   <div className="flex gap-1.5 items-center h-full">
-                    <span className="w-2.5 h-2.5 bg-cyan-400/80 rounded-full animate-bounce shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ animationDelay: '0ms' }}></span>
-                    <span className="w-2.5 h-2.5 bg-cyan-400/80 rounded-full animate-bounce shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-2.5 h-2.5 bg-cyan-400/80 rounded-full animate-bounce shadow-[0_0_10px_rgba(34,211,238,0.5)]" style={{ animationDelay: '300ms' }}></span>
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                   </div>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Camera, X, RefreshCcw, Check, Flashlight } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface CameraCaptureProps {
   onCapture: (imageSrc: string) => void;
@@ -53,21 +54,23 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
       let width = video.videoWidth;
       let height = video.videoHeight;
       
-      if (width > height && width > MAX_DIMENSION) {
-        height *= MAX_DIMENSION / width;
-        width = MAX_DIMENSION;
-      } else if (height > MAX_DIMENSION) {
-        width *= MAX_DIMENSION / height;
-        height = MAX_DIMENSION;
-      }
-      
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, width, height);
-        const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
-        setCapturedImage(imageSrc);
+      if (width > 0 && height > 0) {
+        if (width > height && width > MAX_DIMENSION) {
+          height = Math.round(height * (MAX_DIMENSION / width));
+          width = MAX_DIMENSION;
+        } else if (height > MAX_DIMENSION) {
+          width = Math.round(width * (MAX_DIMENSION / height));
+          height = MAX_DIMENSION;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, width, height);
+          const imageSrc = canvas.toDataURL('image/jpeg', 0.8);
+          setCapturedImage(imageSrc);
+        }
       }
     }
   };
@@ -86,7 +89,12 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-black flex flex-col"
+    >
       <div className="flex justify-between items-center p-5 text-white z-10 bg-gradient-to-b from-black/90 via-black/50 to-transparent backdrop-blur-sm">
         <button onClick={onClose} className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 hover:scale-110">
           <X size={24} />
@@ -102,7 +110,13 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
             <button onClick={startCamera} className="mt-6 px-6 py-2.5 bg-white/10 hover:bg-white/20 rounded-xl text-white font-medium transition-colors">Retry</button>
           </div>
         ) : capturedImage ? (
-          <img src={capturedImage} alt="Captured" className="w-full h-full object-contain bg-black" />
+          <motion.img 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            src={capturedImage} 
+            alt="Captured" 
+            className="w-full h-full object-contain bg-black" 
+          />
         ) : (
           <video
             ref={videoRef}
@@ -114,19 +128,26 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
         <canvas ref={canvasRef} className="hidden" />
 
         {/* Overlay targeting box */}
-        {!capturedImage && !error && (
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div className="w-72 h-72 border border-cyan-400/30 rounded-[2rem] relative shadow-[inset_0_0_50px_rgba(34,211,238,0.1)]">
-              <div className="absolute -top-1 -left-1 w-10 h-10 border-t-4 border-l-4 border-cyan-400 rounded-tl-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
-              <div className="absolute -top-1 -right-1 w-10 h-10 border-t-4 border-r-4 border-cyan-400 rounded-tr-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
-              <div className="absolute -bottom-1 -left-1 w-10 h-10 border-b-4 border-l-4 border-cyan-400 rounded-bl-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
-              <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-4 border-r-4 border-cyan-400 rounded-br-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
-            </div>
-            <div className="absolute bottom-24 text-cyan-400/80 font-medium tracking-widest uppercase text-sm bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-md border border-cyan-500/20">
-              Align device in frame
-            </div>
-          </div>
-        )}
+        <AnimatePresence>
+          {!capturedImage && !error && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 pointer-events-none flex items-center justify-center"
+            >
+              <div className="w-72 h-72 border border-cyan-400/30 rounded-[2rem] relative shadow-[inset_0_0_50px_rgba(34,211,238,0.1)]">
+                <div className="absolute -top-1 -left-1 w-10 h-10 border-t-4 border-l-4 border-cyan-400 rounded-tl-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
+                <div className="absolute -top-1 -right-1 w-10 h-10 border-t-4 border-r-4 border-cyan-400 rounded-tr-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
+                <div className="absolute -bottom-1 -left-1 w-10 h-10 border-b-4 border-l-4 border-cyan-400 rounded-bl-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
+                <div className="absolute -bottom-1 -right-1 w-10 h-10 border-b-4 border-r-4 border-cyan-400 rounded-br-[2rem] shadow-[0_0_15px_rgba(34,211,238,0.4)]"></div>
+              </div>
+              <div className="absolute bottom-24 text-cyan-400/80 font-medium tracking-widest uppercase text-sm bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-md border border-cyan-500/20">
+                Align device in frame
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="p-8 bg-gradient-to-t from-black via-black/90 to-transparent flex justify-center items-center gap-10 pb-12 absolute bottom-0 left-0 right-0">
@@ -155,6 +176,6 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

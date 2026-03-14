@@ -137,11 +137,35 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
           {capturedImage && (
             <div className="w-full md:w-1/3 shrink-0 relative group">
               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 to-emerald-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-              <img 
-                src={capturedImage} 
-                alt="Analyzed Device" 
-                className="w-full aspect-square object-cover rounded-2xl border border-white/20 shadow-2xl relative z-10"
-              />
+              <div className="relative z-10 rounded-2xl overflow-hidden border border-white/20 shadow-2xl">
+                <img 
+                  src={capturedImage} 
+                  alt="Analyzed Device" 
+                  className="w-full aspect-square object-cover"
+                />
+                {/* Simulated Fault Hotspot */}
+                {primaryIssue && (
+                  <motion.div 
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.5, type: 'spring' }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                  >
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-red-500/40 rounded-full blur-md animate-pulse"></div>
+                      <div className="w-8 h-8 rounded-full border-2 border-red-500 bg-red-500/20 flex items-center justify-center relative z-10 backdrop-blur-sm">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                      </div>
+                      
+                      {/* Tooltip */}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-[200px] bg-zinc-900/90 backdrop-blur-md text-white text-xs p-2 rounded-lg border border-red-500/30 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <span className="font-bold text-red-400 block mb-0.5">Detected Fault</span>
+                        {primaryIssue.issue}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
               <div className="absolute bottom-4 left-4 z-20 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
                 <Target size={14} className="text-cyan-400" />
                 <span className="text-xs font-medium text-white">Analyzed Subject</span>
@@ -316,9 +340,9 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
           <div className="relative space-y-0 before:absolute before:inset-0 before:ml-[1.375rem] before:h-full before:w-0.5 before:bg-gradient-to-b before:from-emerald-500/20 before:via-white/10 before:to-transparent">
             {analysis.repairSteps?.length > 0 ? (
               analysis.repairSteps.map((step, idx) => {
-                const parts = step.split(/(?<=\.)\s+/);
-                const firstPart = parts[0];
-                const rest = parts.slice(1).join(' ');
+                const match = step.match(/^([^.]+\.)\s*(.*)$/);
+                const firstPart = match ? match[1] : step;
+                const rest = match ? match[2] : '';
                 const isCompleted = completedSteps.has(idx);
                 
                 return (

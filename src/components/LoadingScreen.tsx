@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Cpu, Search, Wrench } from 'lucide-react';
+import { Cpu, Search, Wrench, Zap } from 'lucide-react';
 
 interface LoadingScreenProps {
   message?: string;
@@ -11,12 +11,32 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = "Analyzi
   const getStageConfig = () => {
     if (message.toLowerCase().includes('detecting')) {
       return {
+        icon: Search,
+        color: "text-cyan-400",
+        ring: "border-cyan-500/30",
+        innerRing: "border-blue-500/50",
+        shadow: "shadow-[0_0_30px_rgba(59,130,246,0.5)]",
+        bgGlow: "bg-cyan-500/10"
+      };
+    }
+    if (message.toLowerCase().includes('identifying')) {
+      return {
         icon: Cpu,
         color: "text-emerald-400",
         ring: "border-emerald-500/30",
         innerRing: "border-green-500/50",
         shadow: "shadow-[0_0_30px_rgba(16,185,129,0.5)]",
         bgGlow: "bg-emerald-500/10"
+      };
+    }
+    if (message.toLowerCase().includes('diagnosing')) {
+      return {
+        icon: Zap,
+        color: "text-purple-400",
+        ring: "border-purple-500/30",
+        innerRing: "border-fuchsia-500/50",
+        shadow: "shadow-[0_0_30px_rgba(168,85,247,0.5)]",
+        bgGlow: "bg-purple-500/10"
       };
     }
     if (message.toLowerCase().includes('generating')) {
@@ -100,8 +120,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = "Analyzi
           <motion.div 
             animate={{ 
               y: [0, -10, 0],
-              borderColor: message.toLowerCase().includes('analyzing') ? 'rgba(34,211,238,0.5)' : 'rgba(255,255,255,0.05)',
-              color: message.toLowerCase().includes('analyzing') ? '#22d3ee' : '#71717a'
+              borderColor: message.toLowerCase().includes('detecting') ? 'rgba(34,211,238,0.5)' : 'rgba(255,255,255,0.05)',
+              color: message.toLowerCase().includes('detecting') ? '#22d3ee' : '#71717a'
             }} 
             transition={{ duration: 1.5, repeat: Infinity, delay: 0 }} 
             className="p-3 bg-zinc-900/60 backdrop-blur-md rounded-2xl border transition-colors duration-500 shadow-lg"
@@ -111,8 +131,8 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = "Analyzi
           <motion.div 
             animate={{ 
               y: [0, -10, 0],
-              borderColor: message.toLowerCase().includes('detecting') ? 'rgba(52,211,153,0.5)' : 'rgba(255,255,255,0.05)',
-              color: message.toLowerCase().includes('detecting') ? '#34d399' : '#71717a'
+              borderColor: message.toLowerCase().includes('identifying') ? 'rgba(52,211,153,0.5)' : 'rgba(255,255,255,0.05)',
+              color: message.toLowerCase().includes('identifying') ? '#34d399' : '#71717a'
             }} 
             transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }} 
             className="p-3 bg-zinc-900/60 backdrop-blur-md rounded-2xl border transition-colors duration-500 shadow-lg"
@@ -122,10 +142,21 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ message = "Analyzi
           <motion.div 
             animate={{ 
               y: [0, -10, 0],
+              borderColor: message.toLowerCase().includes('diagnosing') ? 'rgba(168,85,247,0.5)' : 'rgba(255,255,255,0.05)',
+              color: message.toLowerCase().includes('diagnosing') ? '#a855f7' : '#71717a'
+            }} 
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} 
+            className="p-3 bg-zinc-900/60 backdrop-blur-md rounded-2xl border transition-colors duration-500 shadow-lg"
+          >
+            <Zap size={22} />
+          </motion.div>
+          <motion.div 
+            animate={{ 
+              y: [0, -10, 0],
               borderColor: message.toLowerCase().includes('generating') ? 'rgba(251,191,36,0.5)' : 'rgba(255,255,255,0.05)',
               color: message.toLowerCase().includes('generating') ? '#fbbf24' : '#71717a'
             }} 
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }} 
+            transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }} 
             className="p-3 bg-zinc-900/60 backdrop-blur-md rounded-2xl border transition-colors duration-500 shadow-lg"
           >
             <Wrench size={22} />

@@ -77,20 +77,22 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
           let width = img.width;
           let height = img.height;
           
-          if (width > height && width > MAX_DIMENSION) {
-            height *= MAX_DIMENSION / width;
-            width = MAX_DIMENSION;
-          } else if (height > MAX_DIMENSION) {
-            width *= MAX_DIMENSION / height;
-            height = MAX_DIMENSION;
-          }
-          
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, width, height);
-            setImage(canvas.toDataURL('image/jpeg', 0.8));
+          if (width > 0 && height > 0) {
+            if (width > height && width > MAX_DIMENSION) {
+              height = Math.round(height * (MAX_DIMENSION / width));
+              width = MAX_DIMENSION;
+            } else if (height > MAX_DIMENSION) {
+              width = Math.round(width * (MAX_DIMENSION / height));
+              height = MAX_DIMENSION;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              setImage(canvas.toDataURL('image/jpeg', 0.8));
+            }
           }
         };
         img.src = reader.result as string;
@@ -148,16 +150,37 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
     }
   };
 
+  const SUGGESTIONS = [
+    "What is this component?",
+    "Is it safe to repair?",
+    "Show another fix option"
+  ];
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      className={`relative flex flex-col w-full max-w-3xl mx-auto bg-zinc-900/60 backdrop-blur-2xl border rounded-3xl shadow-2xl overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500/50 focus-within:border-cyan-500/50 transition-all duration-300 ${
-        isDragging ? 'border-cyan-500 bg-cyan-950/30 scale-[1.02]' : 'border-white/10 hover:border-white/20'
-      }`}
-    >
+    <div className="w-full max-w-3xl mx-auto flex flex-col gap-3">
+      {!isLoading && (
+        <div className="flex flex-wrap gap-2 px-2 justify-center md:justify-start">
+          {SUGGESTIONS.map((suggestion, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => onSendMessage(suggestion)}
+              className="text-xs md:text-sm px-4 py-2 bg-zinc-800/50 hover:bg-zinc-700/80 text-zinc-300 hover:text-cyan-400 border border-white/5 hover:border-cyan-500/30 rounded-full transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(34,211,238,0.15)]"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      )}
+      <form
+        onSubmit={handleSubmit}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        className={`relative flex flex-col w-full bg-zinc-900/60 backdrop-blur-2xl border rounded-3xl shadow-2xl overflow-hidden focus-within:ring-2 focus-within:ring-cyan-500/50 focus-within:border-cyan-500/50 transition-all duration-300 ${
+          isDragging ? 'border-cyan-500 bg-cyan-950/30 scale-[1.02]' : 'border-white/10 hover:border-white/20'
+        }`}
+      >
       {isDragging && (
         <div className="absolute inset-0 bg-cyan-950/80 z-10 flex items-center justify-center backdrop-blur-md">
           <div className="flex flex-col items-center text-cyan-400 font-medium">
@@ -213,7 +236,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
           className="flex-1 bg-transparent border-0 focus:ring-0 resize-none py-3.5 px-2 text-white placeholder-zinc-500 outline-none text-base"
           disabled={isLoading}
         />
-        
+
         {recognitionRef.current && (
           <button
             type="button"
@@ -239,5 +262,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
         </button>
       </div>
     </form>
+    </div>
   );
 };
