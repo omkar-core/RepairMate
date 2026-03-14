@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Camera, Upload, Wrench, ChevronRight, PlayCircle, Brain } from 'lucide-react';
+import { Camera, Upload, Wrench, ChevronRight, PlayCircle, Brain, Sparkles, Smartphone, Droplets } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface LandingPageProps {
@@ -10,11 +10,13 @@ interface LandingPageProps {
 const DEMO_IMAGES = [
   {
     name: "Cracked Screen",
+    icon: Smartphone,
     url: "https://images.unsplash.com/photo-1512499617640-c74ae3a79d37?auto=format&fit=crop&q=80&w=800",
     description: "Test screen repair analysis"
   },
   {
     name: "Water Damage",
+    icon: Droplets,
     url: "https://images.unsplash.com/photo-1588508065123-287b28e0141c?auto=format&fit=crop&q=80&w=800",
     description: "Test liquid damage diagnosis"
   }
@@ -23,7 +25,7 @@ const DEMO_IMAGES = [
 export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUploadImage }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [showDemoOptions, setShowDemoOptions] = useState(false);
+  const [showDemoOptions, setShowDemoOptions] = useState(true);
 
   const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -113,11 +115,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-4xl flex flex-col items-center text-center z-10 mt-12 mb-20"
       >
-        <div className="mb-8 relative group">
+        <div className="mb-6 relative group">
           <div className="absolute inset-0 bg-cyan-500/30 blur-2xl rounded-full group-hover:bg-cyan-400/40 transition-colors duration-500" />
           <div className="relative bg-zinc-900/80 backdrop-blur-xl border border-white/10 p-5 rounded-3xl shadow-2xl transform group-hover:scale-105 transition-transform duration-500">
-            <Wrench size={56} className="text-cyan-400" />
+            <Wrench size={48} className="text-cyan-400" />
           </div>
+        </div>
+
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-900/80 border border-white/10 text-zinc-300 text-sm font-medium mb-8 shadow-lg backdrop-blur-md">
+          <Sparkles size={16} className="text-cyan-400" />
+          Powered by Gemini 3 Flash
         </div>
 
         <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>
@@ -125,16 +132,20 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Instantly with AI</span>
         </h1>
         
-        <p className="text-lg md:text-xl text-zinc-400 mb-12 max-w-2xl leading-relaxed font-medium">
+        <p className="text-lg md:text-xl text-zinc-400 mb-10 max-w-2xl leading-relaxed font-medium">
           Point your camera at a device and RepairMate AI will diagnose the problem and guide you step-by-step.
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-6 w-full max-w-3xl justify-center mb-12">
+        <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl justify-center mb-12">
           <button 
             onClick={onOpenCamera}
-            className="group relative flex-1 flex items-center justify-center gap-3 py-6 px-8 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-bold text-xl rounded-2xl transition-all duration-300 hover:scale-[1.03] shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)] border border-white/20"
+            className="group relative flex-1 flex flex-col items-center justify-center gap-1 py-5 px-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white rounded-2xl transition-all duration-300 hover:scale-[1.03] shadow-[0_0_30px_rgba(34,211,238,0.3)] hover:shadow-[0_0_50px_rgba(34,211,238,0.5)] border border-white/20"
           >
-            <span>📸 Scan Device</span>
+            <div className="flex items-center gap-2 font-bold text-xl">
+              <Camera size={24} />
+              <span>Scan Device</span>
+            </div>
+            <span className="text-cyan-100 text-sm font-medium opacity-90">Use your camera</span>
           </button>
 
           <button 
@@ -142,13 +153,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            className={`group relative flex-1 flex items-center justify-center gap-3 py-6 px-8 font-bold text-xl rounded-2xl transition-all duration-300 border-2 backdrop-blur-md ${
+            className={`group relative flex-1 flex flex-col items-center justify-center gap-1 py-5 px-6 rounded-2xl transition-all duration-300 border-2 backdrop-blur-md ${
               isDragging 
                 ? 'border-cyan-400 bg-cyan-500/20 scale-[1.03] shadow-[0_0_30px_rgba(34,211,238,0.2)]' 
                 : 'border-white/20 bg-zinc-900/60 hover:bg-zinc-800/90 hover:border-white/40 hover:scale-[1.03] shadow-xl'
             }`}
           >
-            <span className="text-white">🖼 Upload Photo</span>
+            <div className="flex items-center gap-2 font-bold text-xl text-white">
+              <Upload size={24} className={isDragging ? 'text-cyan-400' : 'text-zinc-400 group-hover:text-cyan-400 transition-colors'} />
+              <span>Upload Photo</span>
+            </div>
+            <span className="text-zinc-400 text-sm font-medium">From your gallery</span>
           </button>
 
           <input 
@@ -161,36 +176,34 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
         </div>
 
         {/* Quick Demo Section */}
-        <div className="w-full max-w-md mb-20">
-          <button 
-            onClick={() => setShowDemoOptions(!showDemoOptions)}
-            className="flex items-center justify-center gap-2 w-full py-3 px-4 text-sm font-medium text-zinc-300 bg-zinc-900/50 hover:bg-zinc-800/80 border border-white/5 hover:border-white/10 rounded-xl transition-all"
-          >
-            <PlayCircle size={18} className="text-cyan-400" />
-            Try a Quick Demo
-          </button>
+        <div className="w-full max-w-lg mb-20">
+          <div className="flex items-center gap-4 mb-4 opacity-80">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+            <span className="text-xs text-zinc-400 font-semibold uppercase tracking-widest">Or try an example</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          </div>
           
-          {showDemoOptions && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="mt-4 grid grid-cols-2 gap-3"
-            >
-              {DEMO_IMAGES.map((demo, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => loadDemoImage(demo.url)}
-                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-zinc-900/50 border border-white/5 hover:bg-zinc-800 hover:border-cyan-500/30 transition-all text-left group"
-                >
-                  <div className="w-full h-24 rounded-lg overflow-hidden relative">
-                    <img src={demo.url} alt={demo.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors"></div>
-                  </div>
-                  <span className="text-xs font-semibold text-zinc-300 group-hover:text-cyan-400 transition-colors w-full truncate text-center">{demo.name}</span>
-                </button>
-              ))}
-            </motion.div>
-          )}
+          <div className="grid grid-cols-2 gap-4">
+            {DEMO_IMAGES.map((demo, idx) => (
+              <button
+                key={idx}
+                onClick={() => loadDemoImage(demo.url)}
+                className="flex items-center gap-3 p-2 rounded-2xl bg-zinc-900/40 border border-white/5 hover:bg-zinc-800 hover:border-cyan-500/30 transition-all text-left group shadow-lg"
+              >
+                <div className="w-16 h-16 rounded-xl overflow-hidden relative shrink-0">
+                  <img src={demo.url} alt={demo.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-1.5 text-sm font-bold text-zinc-200 group-hover:text-cyan-400 transition-colors">
+                    <demo.icon size={14} className="text-cyan-500" />
+                    {demo.name}
+                  </span>
+                  <span className="text-xs text-zinc-500 font-medium">Click to test</span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Visual Demo Section */}

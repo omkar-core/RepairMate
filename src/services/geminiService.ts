@@ -79,7 +79,7 @@ export async function analyzeRepairIssueStructured(
     }
 
     const response = await getAI().models.generateContent({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: { parts },
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
@@ -188,7 +188,7 @@ export async function chatWithRepairMate(
     contents.push({ role: 'user', parts: userParts });
 
     const response = await getAI().models.generateContent({
-      model: "gemini-3.1-pro-preview",
+      model: "gemini-3-flash-preview",
       contents: contents,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
