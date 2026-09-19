@@ -214,8 +214,9 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className="p-3.5 text-zinc-500 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-2xl transition-all duration-300 hover:scale-110 shrink-0"
+          className="p-3.5 text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-2xl transition-all duration-300 hover:scale-110 shrink-0"
           disabled={isLoading}
+          aria-label="Attach an image"
           title="Upload image"
         >
           <ImageIcon size={22} />
@@ -228,13 +229,16 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
           onChange={handleImageUpload}
         />
         
+        <label htmlFor="chat-message-input" className="sr-only">Message RepairMate</label>
         <input
+          id="chat-message-input"
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={isListening ? "Listening..." : "Ask about your broken device..."}
           className="flex-1 bg-transparent border-0 focus:ring-0 resize-none py-3.5 px-2 text-white placeholder-zinc-500 outline-none text-base"
           disabled={isLoading}
+          autoComplete="off"
         />
 
         {recognitionRef.current && (
@@ -244,9 +248,10 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
             className={`p-3.5 rounded-2xl transition-all duration-300 hover:scale-110 shrink-0 ${
               isListening 
                 ? 'text-red-400 bg-red-500/10 hover:bg-red-500/20 animate-pulse' 
-                : 'text-zinc-500 hover:text-cyan-400 hover:bg-cyan-500/10'
+                : 'text-zinc-400 hover:text-cyan-400 hover:bg-cyan-500/10'
             }`}
             disabled={isLoading}
+            aria-label={isListening ? "Stop listening" : "Start voice input"}
             title={isListening ? "Stop listening" : "Start voice input"}
           >
             {isListening ? <MicOff size={22} /> : <Mic size={22} />}
@@ -256,6 +261,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isLoading }
         <button
           type="submit"
           disabled={(!message.trim() && !image) || isLoading}
+          aria-label="Send message"
           className="p-3.5 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-2xl hover:from-cyan-400 hover:to-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-110 shrink-0 shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_30px_rgba(34,211,238,0.5)]"
         >
           <Send size={20} className="ml-0.5" />

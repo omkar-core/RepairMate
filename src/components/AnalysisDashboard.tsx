@@ -45,8 +45,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
     show: { opacity: 1, y: 0 }
   };
 
-  const getDifficultyColor = (diff: string) => {
-    switch (diff.toLowerCase()) {
+  const getDifficultyColor = (diff?: string) => {
+    switch ((diff ?? '').toLowerCase()) {
       case 'easy': return 'text-emerald-400 bg-emerald-400/10 border-emerald-400/20';
       case 'medium': return 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20';
       case 'hard': return 'text-red-400 bg-red-400/10 border-red-400/20';
@@ -184,11 +184,11 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              {analysis.deviceIdentification.name}
-            </h1>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              {analysis.deviceIdentification?.name || 'Unknown Device'}
+            </h2>
             <p className="text-lg text-zinc-400 mb-8 font-medium">
-              by {analysis.deviceIdentification.brand}
+              by {analysis.deviceIdentification?.brand || 'Unknown'}
             </p>
 
             {primaryIssue && (
@@ -218,8 +218,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
             <Activity size={20} />
           </div>
           <div>
-            <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-0.5">Difficulty</p>
-            <p className={`text-sm font-bold ${getDifficultyColor(analysis.difficulty).split(' ')[0]}`}>{analysis.difficulty}</p>
+            <p className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-0.5">Difficulty</p>
+            <p className={`text-sm font-bold ${getDifficultyColor(analysis.difficulty).split(' ')[0]}`}>{analysis.difficulty || '—'}</p>
           </div>
         </div>
         <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-zinc-800/60 transition-colors">
@@ -227,8 +227,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
             <Clock size={20} />
           </div>
           <div>
-            <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-0.5">Est. Time</p>
-            <p className="text-sm font-bold text-white">{analysis.estimatedTime}</p>
+            <p className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-0.5">Est. Time</p>
+            <p className="text-sm font-bold text-white">{analysis.estimatedTime || '—'}</p>
           </div>
         </div>
         <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-zinc-800/60 transition-colors">
@@ -236,8 +236,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
             <DollarSign size={20} />
           </div>
           <div>
-            <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-0.5">Est. Cost</p>
-            <p className="text-sm font-bold text-white">{analysis.estimatedCost}</p>
+            <p className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-0.5">Est. Cost</p>
+            <p className="text-sm font-bold text-white">{analysis.estimatedCost || '—'}</p>
           </div>
         </div>
         <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-2xl p-5 flex items-center gap-4 hover:bg-zinc-800/60 transition-colors">
@@ -245,8 +245,8 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
             <Target size={20} />
           </div>
           <div>
-            <p className="text-xs text-zinc-500 uppercase font-bold tracking-wider mb-0.5">AI Confidence</p>
-            <p className="text-sm font-bold text-white">{analysis.confidenceScore}%</p>
+            <p className="text-xs text-zinc-400 uppercase font-bold tracking-wider mb-0.5">AI Confidence</p>
+            <p className="text-sm font-bold text-white">{analysis.confidenceScore ?? 0}%</p>
           </div>
         </div>
       </motion.div>
@@ -296,7 +296,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
                   </li>
                 ))
               ) : (
-                <li className="text-zinc-500 text-sm italic p-3">No specific tools identified.</li>
+                <li className="text-zinc-400 text-sm italic p-3">No specific tools identified.</li>
               )}
             </ul>
           </motion.div>
@@ -317,7 +317,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
                   </span>
                 ))
               ) : (
-                <span className="text-zinc-500 text-sm italic">No specific components identified.</span>
+                <span className="text-zinc-400 text-sm italic">No specific components identified.</span>
               )}
             </div>
           </motion.div>
@@ -332,7 +332,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
               </div>
               <h3 className="text-2xl font-bold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>Repair Protocol</h3>
             </div>
-            <div className="text-sm font-bold text-zinc-500 bg-zinc-800 px-4 py-1.5 rounded-full border border-white/5">
+            <div className="text-sm font-bold text-zinc-400 bg-zinc-800 px-4 py-1.5 rounded-full border border-white/5">
               {completedSteps.size} / {analysis.repairSteps?.length || 0} COMPLETED
             </div>
           </div>
@@ -365,11 +365,11 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
                           : 'bg-zinc-800/40 hover:bg-zinc-800/80 border-white/5 hover:border-white/10 shadow-lg'
                       }`}
                     >
-                      <p className={`text-base leading-relaxed transition-all duration-300 ${isCompleted ? 'text-zinc-500' : 'text-zinc-300'}`}>
+                      <p className={`text-base leading-relaxed transition-all duration-300 ${isCompleted ? 'text-zinc-400' : 'text-zinc-300'}`}>
                         {rest ? (
                           <>
-                            <strong className={`block mb-2 text-lg font-bold transition-colors ${isCompleted ? 'text-zinc-500 line-through' : 'text-white'}`}>{firstPart}</strong>
-                            <span className={`transition-colors ${isCompleted ? 'text-zinc-600' : 'text-zinc-400'}`}>{rest}</span>
+                            <strong className={`block mb-2 text-lg font-bold transition-colors ${isCompleted ? 'text-zinc-400 line-through' : 'text-white'}`}>{firstPart}</strong>
+                            <span className={`transition-colors ${isCompleted ? 'text-zinc-500' : 'text-zinc-400'}`}>{rest}</span>
                           </>
                         ) : (
                           <span className={isCompleted ? 'line-through' : ''}>{step}</span>
@@ -380,7 +380,7 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
                 );
               })
             ) : (
-              <div className="text-zinc-500 italic p-4">No repair steps provided.</div>
+              <div className="text-zinc-400 italic p-4">No repair steps provided.</div>
             )}
           </div>
         </motion.div>
@@ -426,13 +426,13 @@ export const AnalysisDashboard: React.FC<AnalysisDashboardProps> = ({ analysis, 
               <div className="flex items-center gap-2 text-zinc-400 text-xs font-bold uppercase">
                 <Recycle size={14} /> E-Waste
               </div>
-              <span className="text-emerald-400 font-bold text-sm">{analysis.sustainabilityImpact.eWasteSaved}</span>
+              <span className="text-emerald-400 font-bold text-sm">{analysis.sustainabilityImpact?.eWasteSaved || '—'}</span>
             </div>
             <div className="flex items-center justify-between bg-zinc-800/50 p-2 rounded-lg">
               <div className="flex items-center gap-2 text-zinc-400 text-xs font-bold uppercase">
                 <Cloud size={14} /> Carbon
               </div>
-              <span className="text-emerald-400 font-bold text-sm">{analysis.sustainabilityImpact.carbonSaved}</span>
+              <span className="text-emerald-400 font-bold text-sm">{analysis.sustainabilityImpact?.carbonSaved || '—'}</span>
             </div>
           </div>
         </motion.div>

@@ -1,13 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { MessageBubble } from './components/MessageBubble';
 import { ChatInput } from './components/ChatInput';
-import { LandingPage } from './components/LandingPage';
-import { CameraCapture } from './components/CameraCapture';
-import { LoadingScreen } from './components/LoadingScreen';
-import { AnalysisDashboard } from './components/AnalysisDashboard';
-import { Message } from './types';
-import { analyzeRepairIssueStructured, chatWithRepairMate, RepairAnalysis } from './services/geminiService';
+import { Message, type RepairAnalysis } from './types';
+import { analyzeRepairIssueStructured, chatWithRepairMate } from './services/api';
 import { Wrench, AlertCircle, ArrowLeft } from 'lucide-react';
+import {
+  LandingPageSkeleton,
+  CameraCaptureSkeleton,
+  LoadingScreenSkeleton,
+  AnalysisDashboardSkeleton,
+} from './components/SkeletonLoaders';
+
+const LandingPage = lazy(() => import('./components/LandingPage').then((m) => ({ default: m.LandingPage })));
+const CameraCapture = lazy(() => import('./components/CameraCapture').then((m) => ({ default: m.CameraCapture })));
+const LoadingScreen = lazy(() => import('./components/LoadingScreen').then((m) => ({ default: m.LoadingScreen })));
+const AnalysisDashboard = lazy(() => import('./components/AnalysisDashboard').then((m) => ({ default: m.AnalysisDashboard })));
 
 type AppState = 'landing' | 'camera' | 'loading' | 'dashboard' | 'error';
 
@@ -39,19 +46,9 @@ export default function App() {
     const timer3 = setTimeout(() => setLoadingMessage('📋 Generating repair instructions...'), 6000);
     
     try {
-      let base64Image = '';
-      let mimeType = '';
-      
-      const matches = imageSrc.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-      if (matches && matches.length === 3) {
-        mimeType = matches[1];
-        base64Image = matches[2];
-      }
-
       const result = await analyzeRepairIssueStructured(
         "Perform a professional engineering diagnostic analysis on this device image. Identify components, potential faults, and provide precise repair instructions.",
-        base64Image,
-        mimeType
+        imageSrc
       );
       
       if (result.imageQuality && !result.imageQuality.isClear) {
@@ -165,24 +162,32 @@ export default function App() {
 
   if (appState === 'landing') {
     return (
-      <LandingPage 
-        onOpenCamera={() => setAppState('camera')} 
-        onUploadImage={handleImageCapture} 
-      />
+      <Suspense fallback={<LandingPageSkeleton />}>
+        <LandingPage 
+          onOpenCamera={() => setAppState('camera')} 
+          onUploadImage={handleImageCapture} 
+        />
+      </Suspense>
     );
   }
 
   if (appState === 'camera') {
     return (
-      <CameraCapture 
-        onCapture={handleImageCapture} 
-        onClose={() => setAppState('landing')} 
-      />
+      <Suspense fallback={<CameraCaptureSkeleton />}>
+        <CameraCapture 
+          onCapture={handleImageCapture} 
+          onClose={() => setAppState('landing')} 
+        />
+      </Suspense>
     );
   }
 
   if (appState === 'loading') {
-    return <LoadingScreen message={loadingMessage} />;
+    return (
+      <Suspense fallback={<LoadingScreenSkeleton />}>
+        <LoadingScreen message={loadingMessage} />
+      </Suspense>
+    );
   }
 
   if (appState === 'error' && imageError) {
@@ -219,18 +224,24 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-transparent font-sans text-white">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-cyan-500 focus:text-zinc-950 focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold"
+      >
+        Skip to content
+      </a>
       {/* Header */}
       <header className="flex-none bg-zinc-950/60 backdrop-blur-xl border-b border-white/5 px-4 py-4 sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button onClick={handleReset} className="p-2.5 hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-105 mr-1 group">
+            <button onClick={handleReset} aria-label="Back to start" className="p-2.5 hover:bg-white/5 rounded-full transition-all duration-300 hover:scale-105 mr-1 group">
               <ArrowLeft size={20} className="text-zinc-400 group-hover:text-white transition-colors" />
             </button>
-            <div className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-2.5 rounded-xl text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]">
+            <div aria-hidden="true" className="bg-gradient-to-br from-cyan-500/20 to-blue-500/20 p-2.5 rounded-xl text-cyan-400 border border-cyan-500/20 shadow-[0_0_15px_rgba(34,211,238,0.1)]">
               <Wrench size={20} />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>RepairMate <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">AI</span></h1>
+              <p className="text-xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>RepairMate <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">AI</span></p>
               <p className="text-xs text-cyan-400/80 font-medium tracking-wide uppercase mt-0.5">Live Assistant</p>
             </div>
           </div>
@@ -238,7 +249,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+      <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
         <div className="max-w-6xl mx-auto flex flex-col gap-10 pb-36">
           
           {/* Dashboard Section */}
@@ -247,30 +258,32 @@ export default function App() {
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Analysis Results</h2>
               </div>
-              <AnalysisDashboard analysis={analysis} capturedImage={capturedImage} />
+              <Suspense fallback={<AnalysisDashboardSkeleton />}>
+                <AnalysisDashboard analysis={analysis} capturedImage={capturedImage} />
+              </Suspense>
             </div>
           )}
 
           {/* Divider */}
           <div className="flex items-center gap-4 my-2 opacity-60">
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-            <span className="text-xs text-zinc-500 font-semibold uppercase tracking-widest">Follow-up Chat</span>
+            <span className="text-xs text-zinc-400 font-semibold uppercase tracking-widest">Follow-up Chat</span>
             <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
           </div>
 
           {/* Chat Section */}
-          <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full" aria-live="polite">
             {messages.map((msg) => (
               <MessageBubble key={msg.id} message={msg} />
             ))}
             
             {isLoading && (
-              <div className="flex w-full gap-4 p-5 md:p-6 rounded-3xl bg-zinc-800/30 backdrop-blur-xl border border-white/10 shadow-xl mr-auto max-w-[90%]">
+              <div role="status" aria-label="RepairMate is typing" className="flex w-full gap-4 p-5 md:p-6 rounded-3xl bg-zinc-800/30 backdrop-blur-xl border border-white/10 shadow-xl mr-auto max-w-[90%]">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-inner overflow-hidden bg-zinc-800 border border-white/10 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
                   <img src="https://api.dicebear.com/7.x/bottts/svg?seed=RepairMate&backgroundColor=transparent" alt="AI" className="w-full h-full object-cover p-1" />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <div className="flex gap-1.5 items-center h-full">
+                  <div className="flex gap-1.5 items-center h-full" aria-hidden="true">
                     <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
                     <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
                     <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
@@ -287,8 +300,8 @@ export default function App() {
       <div className="flex-none bg-gradient-to-t from-zinc-950 via-zinc-950/95 to-transparent pt-12 pb-6 px-4 fixed bottom-0 left-0 right-0 z-20 backdrop-blur-[2px]">
         <div className="max-w-4xl mx-auto">
           <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-          <div className="mt-4 text-center flex items-center justify-center gap-2 text-xs text-zinc-500/80 font-medium">
-            <AlertCircle size={14} />
+          <div className="mt-4 text-center flex items-center justify-center gap-2 text-xs text-zinc-400/80 font-medium">
+            <AlertCircle size={14} aria-hidden="true" />
             <span>Always prioritize safety. Unplug devices before attempting repairs.</span>
           </div>
         </div>

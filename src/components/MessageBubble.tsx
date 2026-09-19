@@ -41,7 +41,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       </div>
 
       <div className="flex flex-col gap-2 min-w-0 flex-1 mt-1">
-        <div className="font-semibold text-xs text-zinc-500 tracking-widest uppercase mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <div className="font-semibold text-xs text-zinc-400 tracking-widest uppercase mb-1" style={{ fontFamily: 'Outfit, sans-serif' }}>
           {isUser ? 'You' : 'RepairMate AI'}
         </div>
         

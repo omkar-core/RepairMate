@@ -1,0 +1,3 @@
+Contact: mailto:security@repairmate.example
+Preferred-Languages: en
+Expires: 2027-09-19T00:00:00.000Z

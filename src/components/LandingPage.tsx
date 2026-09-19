@@ -105,11 +105,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
 
   return (
     <div className="flex flex-col items-center justify-start min-h-screen bg-zinc-950 text-white p-6 relative overflow-y-auto">
+      <a
+        href="#landing-main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-cyan-500 focus:text-zinc-950 focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold"
+      >
+        Skip to content
+      </a>
       {/* Background elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-cyan-500/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[800px] h-[400px] bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
 
-      <motion.div 
+      <motion.main 
+        id="landing-main"
+        role="main"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -191,7 +199,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
                 className="flex items-center gap-3 p-2 rounded-2xl bg-zinc-900/40 border border-white/5 hover:bg-zinc-800 hover:border-cyan-500/30 transition-all text-left group shadow-lg"
               >
                 <div className="w-16 h-16 rounded-xl overflow-hidden relative shrink-0">
-                  <img src={demo.url} alt={demo.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  <img src={demo.url} alt={demo.name} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
                 </div>
                 <div className="flex flex-col">
@@ -199,7 +207,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
                     <demo.icon size={14} className="text-cyan-500" />
                     {demo.name}
                   </span>
-                  <span className="text-xs text-zinc-500 font-medium">Click to test</span>
+                  <span className="text-xs text-zinc-400 font-medium">Click to test</span>
                 </div>
               </button>
             ))}
@@ -208,7 +216,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
 
         {/* Visual Demo Section */}
         <div className="w-full max-w-5xl">
-          <h2 className="text-2xl font-bold text-white mb-8 tracking-wide uppercase text-zinc-500">How It Works</h2>
+          <h2 className="text-2xl font-bold text-white mb-8 tracking-wide uppercase text-zinc-400">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-zinc-900/40 backdrop-blur-xl border border-white/5 rounded-3xl p-8 flex flex-col items-center text-center hover:bg-zinc-800/60 transition-colors">
               <div className="w-16 h-16 bg-zinc-800 rounded-2xl flex items-center justify-center mb-6 border border-white/5 shadow-lg">
@@ -235,7 +243,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenCamera, onUpload
             </div>
           </div>
         </div>
-      </motion.div>
+      </motion.main>
     </div>
   );
 };

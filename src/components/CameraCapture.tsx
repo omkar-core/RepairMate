@@ -45,6 +45,14 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     };
   }, [startCamera]);
 
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
   const capturePhoto = () => {
     if (videoRef.current && canvasRef.current) {
       const video = videoRef.current;
@@ -93,10 +101,13 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Camera capture"
       className="fixed inset-0 z-50 bg-black flex flex-col"
     >
       <div className="flex justify-between items-center p-5 text-white z-10 bg-gradient-to-b from-black/90 via-black/50 to-transparent backdrop-blur-sm">
-        <button onClick={onClose} className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 hover:scale-110">
+        <button onClick={onClose} aria-label="Close camera" className="p-2.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md transition-all duration-300 hover:scale-110">
           <X size={24} />
         </button>
         <div className="font-semibold tracking-wide text-lg" style={{ fontFamily: 'Outfit, sans-serif' }}>Scan Device</div>
@@ -122,6 +133,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
             ref={videoRef}
             autoPlay
             playsInline
+            aria-label="Camera preview"
             className="w-full h-full object-cover"
           />
         )}
@@ -170,6 +182,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
           <button 
             onClick={capturePhoto} 
             disabled={!!error}
+            aria-label="Capture photo"
             className="w-20 h-20 rounded-full border-[3px] border-white/50 flex items-center justify-center hover:border-white transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 group"
           >
             <div className="w-[68px] h-[68px] bg-white rounded-full group-hover:bg-zinc-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.3)]"></div>

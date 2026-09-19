@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schemas/mcp-server-config.schema.json",
+  "mcpServers": {
+    "context7": {
+      "description": "Up-to-date library/API documentation injected directly into AI prompts (https://context7.com). Get a free key at https://context7.com/dashboard.",
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer CONTEXT7_API_KEY"
+      },
+      "enabled": false
+    },
+    "graphify": {
+      "description": "Codebase knowledge graph for AI assistants (https://graphify.com). Requires `pip install graphifyy`, `graphify build`, then serves graphify-out/graph.json.",
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "graphify.serve", "graphify-out/graph.json"],
+      "enabled": false
+    }
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://repair-mate-seven.vercel.app/sitemap.xml
